@@ -1,0 +1,336 @@
+" NeoBundle {{{
+
+let s:is_windows = has('win16') || has('win32') || has('win64')
+let s:is_cygwin = has('win32unix')
+let s:is_sudo = $SUDO_USER != '' && $USER !=# $SUDO_USER
+			\ && $HOME !=# expand('~'.$USER)
+			\ && $HOME ==# expand('~'.$SUDO_USER)
+
+function! IsWindows()
+	return s:is_windows
+endfunction
+
+function! IsMac()
+	return !s:is_windows && !s:is_cygwin
+				\ && (has('mac') || has('macunix') || has('gui_macvim') ||
+				\   (!executable('xdg-open') &&
+				\     system('uname') =~? '^darwin'))
+endfunction
+
+
+if has('vim_starting')
+	set nocompatible							 " Be iMproved
+
+	" Required:
+	set runtimepath+=~/.vim/bundle/neobundle.vim/
+endif
+
+" Required:
+call neobundle#begin(expand('~/.vim/bundle/'))
+
+
+" Let NeoBundle manage NeoBundle
+" Required:
+NeoBundleFetch 'Shougo/neobundle.vim'
+
+
+" 自動補完
+NeoBundleLazy 'Shougo/neocomplete.vim', {
+			\ 'depends' : 'Shougo/context_filetype.vim',
+			\ 'insert' : 1
+			\ }
+
+" スニペット
+NeoBundleLazy 'Shougo/neosnippet.vim', {
+			\ 'depends' : ['Shougo/neosnippet-snippets', 'Shougo/context_filetype.vim'],
+			\ 'insert' : 1,
+			\ 'filetypes' : 'snippet',
+			\ 'unite_sources' : [
+			\		 'neosnippet', 'neosnippet/user', 'neosnippet/runtime'],
+			\ }
+
+" 統合ユーザーインターフェース
+NeoBundleLazy 'Shougo/unite.vim', {
+			\ 'commands' : [{ 'name' : 'Unite',
+			\									'complete' : 'customlist,unite#complete_source'},
+			\									'UniteWithCursorWord', 'UniteWithInput'],
+			\ "depends" : ["basyura/unite-rails", "Shougo/neomru.vim"]
+			\ }
+
+" vim上でシェルが使える
+NeoBundleLazy 'Shougo/vimshell.vim', {
+			\ 'commands' : [{ 'name' : 'VimShell',
+			\									'complete' : 'customlist,vimshell#complete'},
+			\								'VimShellExecute', 'VimShellInteractive',
+			\								'VimShellCreate',
+			\								'VimShellTerminal', 'VimShellPop'],
+			\ 'mappings' : '<Plug>(vimshell_'
+			\ }
+
+" 一括置換
+NeoBundleLazy 'thinca/vim-qfreplace', {
+			\ 'filetypes' : ['unite', 'quickfix'],
+			\ }
+
+" プログラムをその場で実行
+NeoBundle 'thinca/vim-quickrun'
+
+" マニュアルが引ける
+NeoBundle 'thinca/vim-ref'
+
+" ファイルツリー
+NeoBundle 'scrooloose/nerdtree'
+NeoBundle "taiansu/nerdtree-ag"
+NeoBundle "rking/ag.vim"
+
+" ファイルに応じたコメントアウトをしてくれる
+NeoBundleLazy 'tyru/caw.vim', {
+			\ 'mappings' : [['nxo',
+			\		'<Plug>(caw:prefix)', '<Plug>(caw:i:toggle)']]
+			\ }
+" 括弧の自動補完等
+NeoBundle "kana/vim-smartinput"
+NeoBundle "cohama/vim-smartinput-endwise"
+
+" PHPのメソッドを折りたたむ
+"NeoBundleLazy "everzet/phpfolding.vim", {
+"			\ 'filetypes' : 'php'
+"			\ }
+
+
+" nginxのシンタックスハイライト
+NeoBundleLazy "vim-scripts/nginx.vim", {
+			\ 'filetypes' : ['nginx']
+			\ }
+
+" ファイルを素早く開く
+NeoBundle "kien/ctrlp.vim"
+
+" text-objectを拡張
+NeoBundle 'surround.vim'
+
+" ダミー文言生成
+NeoBundleLazy 'loremipsum', {
+			\ "commands": "Loremipsum"
+			\ }
+
+" 変数や関数の一覧を表示
+NeoBundle "majutsushi/tagbar"
+NeoBundle 'vim-scripts/tagbar-phpctags', {"build": {"windows": "", "others": "chmod +x bin/phpctags"}}
+
+" sudoを実行できる
+NeoBundle 'sudo.vim'
+
+" emmet(zen-coding)
+NeoBundleLazy "mattn/emmet-vim" , {
+			\ "filetypes": ["html", "haml", "smarty", "css", "sass", "scss"]
+			\}
+
+" 単語をsnake_caseやcamelCaseに変換 
+NeoBundle "tanabe/ToggleCase-vim"
+
+" インデントに色を付ける
+NeoBundle "nathanaelkane/vim-indent-guides"
+
+" テキストブロックをそのまま移動できる
+NeoBundle 't9md/vim-textmanip'
+
+" vim上でgit
+NeoBundle "tpope/vim-fugitive"
+
+" gitのログを見やすく
+NeoBundle "gregsexton/gitv"
+
+" vim上で計算
+NeoBundleLazy "gregsexton/VimCalc", {
+			\ "commands": "Calc"
+			\}
+
+
+" ステータスラインをカッコよくする
+NeoBundle "itchyny/lightline.vim"
+
+" シンタックスチェックしてくれる
+NeoBundle 'scrooloose/syntastic'
+
+" カーソルのf移動を便利に
+NeoBundle "rhysd/clever-f.vim"
+
+" markdownのプレビュー
+NeoBundleLazy "kannokanno/previm", {
+			\ "filetypes": "markdown"
+			\}
+
+" ブラウザを開く
+NeoBundleLazy 'tyru/open-browser.vim', {
+			\ 'mappings' : '<Plug>(open-browser-',
+			\ }
+
+" ヤンクの履歴
+NeoBundle "LeafCage/yankround.vim"
+
+" 単語をハイライト
+NeoBundle "t9md/vim-quickhl"
+
+" プロジェクトのルートに自動的に移動してくれる
+NeoBundle "airblade/vim-rooter"
+
+" CoffeeScriptのシンタックスハイライト
+NeoBundle 'kchmck/vim-coffee-script'
+
+" 色んなJavascriptのライブラリのシンタックスハイライト
+NeoBundle "othree/javascript-libraries-syntax.vim"
+
+" ウィンドウサイズを簡単に変更
+NeoBundle 'kana/vim-submode'
+
+" フォントサイズ変更
+NeoBundle 'thinca/vim-fontzoom'
+
+" 日本語ヘルプ
+NeoBundleLazy 'vim-jp/vimdoc-ja', {
+			\ 'filetype' : 'help',
+			\ }
+
+
+" .local.vimrcを読み込んでくれる
+NeoBundle "thinca/vim-localrc"
+
+" colorscheme
+NeoBundle "w0ng/vim-hybrid"
+
+" カーソル移動
+NeoBundle 'haya14busa/vim-easymotion'
+
+" いろんな整形や変換をしてくれる
+NeoBundleLazy 'alpaca-tc/beautify.vim', {
+      \ 'autoload' : {
+      \   'commands' : [
+      \     {
+      \       'name' : 'Beautify',
+      \       'complete' : 'customlist,beautify#complete_options'
+      \     }
+      \ ]
+      \ }}
+
+
+call neobundle#end()
+
+" }}}
+
+" Setting {{{
+
+" Required:
+filetype plugin indent on
+
+" vimrcを開く
+nnoremap <Space>. :<C-u>edit $MYVIMRC<Enter>
+
+" シンタックスハイライト オン
+syntax on
+
+" バッファが編集中でもその他のファイルを開けるように
+set hidden
+
+" 外部のエディタで編集中のファイルが変更されたら自動で読み直す
+set autoread
+
+"インデントはスマートインデント
+set smartindent
+
+"検索文字列が小文字の場合は大文字小文字を区別なく検索する
+set ignorecase
+
+"検索文字列に大文字が含まれている場合は区別して検索する
+set smartcase
+
+"検索時に最後まで行ったら最初に戻る
+set wrapscan
+
+"検索文字列入力時に順次対象文字列にヒットさせる
+set incsearch
+
+"検索語をハイライト表示
+set hlsearch
+
+" ESC連打でハイライト解除
+nmap <Esc><Esc> :nohlsearch<CR><Esc>
+
+"タブの左側にカーソル表示
+set listchars=tab:»-,trail:-,eol:↲,extends:»,precedes:«,nbsp:%
+set nolist
+
+"入力中のコマンドをステータスに表示する
+set showcmd
+
+"括弧入力時の対応する括弧を表示
+set showmatch
+
+"ステータスラインを常に表示
+set laststatus=2
+
+" visualbell
+set visualbell
+
+"文字コードをUFT-8に設定
+set fenc=utf-8
+
+"行番号表示
+set number
+
+"折り返さない
+"set nowrap
+
+"バックアップファイル
+set nobackup
+
+"スワップファイル
+set noswapfile
+
+"改行見える
+"set list
+set listchars=tab:>.,trail:_,eol:↲,extends:>,precedes:<,nbsp:%
+
+"全角スペースをハイライト表示
+function! ZenkakuSpace()
+    highlight ZenkakuSpace cterm=reverse ctermfg=DarkMagenta gui=reverse guifg=DarkMagenta
+endfunction
+   
+if has('syntax')
+    augroup ZenkakuSpace
+        autocmd!
+        autocmd ColorScheme       * call ZenkakuSpace()
+        autocmd VimEnter,WinEnter * match ZenkakuSpace /　/
+    augroup END
+    call ZenkakuSpace()
+endif
+
+"折りたたみ
+"set foldmethod=indent
+"set nofoldenable
+
+" キーワードにハイフンも含める
+set iskeyword+=-
+
+"タブ幅
+set tabstop=2
+set shiftwidth=2
+set smarttab
+set undodir=~/.vim/undo/
+
+"set statusline=%F%m%r%h%w%{fugitive#statusline()}%=[%{&fileencoding}(%{&fileformat})]\ \ %{g:U_nya_()}%
+
+set statusline=%F%m%r%h%w%=\ %{fugitive#statusline()}\ [%{&ff}:%{&fileencoding}]\ [%Y]\ [%04l,%04v]\ [%l/%L]\ %{strftime(\"%Y/%m/%d\ %H:%M:%S\")}
+
+
+if has('path_extra')
+	    set tags+=tags;/crooz/venus4_space/venus/venus_4.0/
+endif
+
+
+"NERDtree
+let g:NERDTreeShowBookmarks=1
+autocmd vimenter * if !argc() | NERDTree | endif
+
+
+
